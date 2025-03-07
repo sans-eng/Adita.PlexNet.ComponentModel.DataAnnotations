@@ -1,0 +1,107 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Adita.PlexNet.ComponentModel.DataAnnotations.DataAnnotations
+{
+    /// <summary>
+    /// Provides an attribute that compares the range of a property of type <see cref="IComparable"/> 
+    /// within a minimum and maximum from two other properties of type <see cref="IComparable"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
+    public sealed class CompareRangeAttribute : ValidationAttribute
+    {
+        #region Constructors
+        /// <summary>
+        /// Initialize a new instance of <see cref="CompareRangeAttribute"/> using specified <paramref name="minPropertyName"/>, <paramref name="maxPropertyName"/>.
+        /// </summary>
+        /// <param name="minPropertyName">The property name to get the minimum value.</param>
+        /// <param name="maxPropertyName">The property name to get the maximum value.</param>
+        public CompareRangeAttribute(string minPropertyName, string maxPropertyName)
+        {
+            MinPropertyName = minPropertyName;
+            MaxPropertyName = maxPropertyName;
+        }
+        #endregion Constructors
+
+        #region Public properties
+        /// <summary>
+        /// Gets the property name for the minimum value.
+        /// </summary>
+        public string MinPropertyName
+        {
+            get;
+        }
+        /// <summary>
+        /// Gets the property name for the maximum value.
+        /// </summary>
+        public string MaxPropertyName
+        {
+            get;
+        }
+        /// <inheritdoc/>
+        public override bool RequiresValidationContext => true;
+        #endregion Public properties
+
+        #region Protected methods
+        /// <summary>
+        /// Validates the specified <paramref name="value"/> with respect to the current <see cref="CompareRangeAttribute"/>.
+        /// </summary>
+        /// <param name="value">The value to validate.</param>
+        /// <param name="validationContext">The context information about the validation operation.</param>
+        /// <returns>An instance of the <see cref="ValidationResult" /> class.</returns>
+        /// <exception cref="InvalidOperationException">Property that has <see cref="MinPropertyName"/> is not found.</exception>
+        /// <exception cref="InvalidOperationException">Property that has <see cref="MaxPropertyName"/> is not found.</exception>
+        /// <exception cref="NotSupportedException">Property value of <see cref="MinPropertyName"/> is not <see cref="IComparable"/>.</exception>
+        /// <exception cref="NotSupportedException">Property value of <see cref="MaxPropertyName"/> is not <see cref="IComparable"/>.</exception>
+        /// <exception cref="InvalidOperationException">Property value of <see cref="MinPropertyName"/> is greater than property value of <see cref="MaxPropertyName"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="validationContext"/> is <see langword="null"/>.</exception>
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            ArgumentNullException.ThrowIfNull(validationContext);
+
+            var instance = validationContext.ObjectInstance;
+
+            var minPropertyInfo = instance.GetType().GetProperty(MinPropertyName);
+            var maxPropertyInfo = instance.GetType().GetProperty(MaxPropertyName);
+
+            //gets min-max
+            if (minPropertyInfo == null)
+            {
+                throw new InvalidOperationException($"{MinPropertyName} property not found.");
+            }
+
+            if (maxPropertyInfo == null)
+            {
+                throw new InvalidOperationException($"{MaxPropertyName} property not found.");
+            }
+
+            if (minPropertyInfo.GetValue(instance) is not IComparable minValue)
+            {
+                throw new NotSupportedException($"The value of {MinPropertyName} property is not {nameof(IComparable)}.");
+            }
+
+            if (maxPropertyInfo.GetValue(instance) is not IComparable maxValue)
+            {
+                throw new NotSupportedException($"The value of {MaxPropertyName} property is not {nameof(IComparable)}.");
+            }
+
+            if (minValue.CompareTo(maxValue) > 0)
+            {
+                throw new InvalidOperationException($"The value of {MinPropertyName} property cannot be greater than value of {nameof(MaxPropertyName)} property.");
+            }
+
+            //validates
+            if (value is not IComparable comparableValue)
+            {
+                return new ValidationResult(ErrorMessageString);
+            }
+
+            if (comparableValue.CompareTo(minValue) >= 0 && comparableValue.CompareTo(maxValue) <= 0)
+            {
+                return ValidationResult.Success;
+            }
+
+            return new ValidationResult(ErrorMessageString);
+        }
+        #endregion Protected methods
+    }
+}

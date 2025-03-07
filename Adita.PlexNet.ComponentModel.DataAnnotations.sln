@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adita.PlexNet.ComponentModel.DataAnnotations", "Adita.PlexNet.ComponentModel.DataAnnotations\Adita.PlexNet.ComponentModel.DataAnnotations.csproj", "{C52EBFCB-A0D0-4B06-BE2D-354589F2AAAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adita.PlexNet.ComponentModel.DataAnnotations.Test", "Adita.PlexNet.ComponentModel.DataAnnotations.Test\Adita.PlexNet.ComponentModel.DataAnnotations.Test.csproj", "{2BB4C1D1-37DF-4C94-BEB2-64053B99C6A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C52EBFCB-A0D0-4B06-BE2D-354589F2AAAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C52EBFCB-A0D0-4B06-BE2D-354589F2AAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C52EBFCB-A0D0-4B06-BE2D-354589F2AAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C52EBFCB-A0D0-4B06-BE2D-354589F2AAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB4C1D1-37DF-4C94-BEB2-64053B99C6A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB4C1D1-37DF-4C94-BEB2-64053B99C6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB4C1D1-37DF-4C94-BEB2-64053B99C6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB4C1D1-37DF-4C94-BEB2-64053B99C6A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
