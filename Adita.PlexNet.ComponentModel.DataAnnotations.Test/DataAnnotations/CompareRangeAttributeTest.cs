@@ -1,6 +1,7 @@
 ﻿using Adita.PlexNet.ComponentModel.DataAnnotations.DataAnnotations;
 using Adita.PlexNet.ComponentModel.DataAnnotations.Test.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Adita.PlexNet.ComponentModel.DataAnnotations.Test.DataAnnotations
 {
@@ -17,16 +18,17 @@ namespace Adita.PlexNet.ComponentModel.DataAnnotations.Test.DataAnnotations
         [TestMethod]
         public void CanValidate()
         {
-            CompareRangeAttribute attribute = new(nameof(MinRange), nameof(MaxRange));
+            CompareRangeAttribute attribute = new(nameof(MinRange), nameof(MaxRange)) {ErrorMessage = "Range must be between {0} to {1}" };
 
             var result1 = attribute.GetValidationResult(15, new ValidationContext(this));
             Assert.IsTrue(result1 == ValidationResult.Success);
 
             var result2 = attribute.GetValidationResult(50, new ValidationContext(this));
+            if(result2 != null)
+            {
+                Debug.WriteLine(result2.ErrorMessage);
+            }
             Assert.IsFalse(result2 == ValidationResult.Success);
-
-            var result3 = attribute.GetValidationResult(new DummyType(), new ValidationContext(this));
-            Assert.IsFalse(result3 == ValidationResult.Success);
         }
 
         [TestMethod]
@@ -40,6 +42,9 @@ namespace Adita.PlexNet.ComponentModel.DataAnnotations.Test.DataAnnotations
 
             CompareRangeAttribute attribute3 = new(nameof(InvalidMinRangeType), nameof(MaxRange));
             Assert.ThrowsException<NotSupportedException>(() => attribute3.GetValidationResult(22, new ValidationContext(this)));
+
+            CompareRangeAttribute attribute4 = new(nameof(MinRange), nameof(MaxRange));
+            Assert.ThrowsException<NotSupportedException>(() => attribute4.GetValidationResult(new DummyType(), new ValidationContext(this)));
         }
 
         [TestMethod]

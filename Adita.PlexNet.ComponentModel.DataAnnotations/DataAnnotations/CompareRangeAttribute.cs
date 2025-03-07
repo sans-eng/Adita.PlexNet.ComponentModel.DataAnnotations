@@ -82,39 +82,28 @@ namespace Adita.PlexNet.ComponentModel.DataAnnotations.DataAnnotations
 
             var instance = validationContext.ObjectInstance;
 
-            var minPropertyInfo = instance.GetType().GetProperty(MinPropertyName);
-            var maxPropertyInfo = instance.GetType().GetProperty(MaxPropertyName);
-
-            //gets min-max
-            if (minPropertyInfo == null)
-            {
-                throw new InvalidOperationException($"{MinPropertyName} property not found.");
-            }
-
-            if (maxPropertyInfo == null)
-            {
-                throw new InvalidOperationException($"{MaxPropertyName} property not found.");
-            }
+            var minPropertyInfo = instance.GetType().GetProperty(MinPropertyName) ?? throw new InvalidOperationException($"{MinPropertyName} property not found.");
+            var maxPropertyInfo = instance.GetType().GetProperty(MaxPropertyName) ?? throw new InvalidOperationException($"{MaxPropertyName} property not found.");
 
             if (minPropertyInfo.GetValue(instance) is not IComparable minValue)
             {
-                throw new NotSupportedException($"The value of {MinPropertyName} property is not {nameof(IComparable)}.");
+                throw new NotSupportedException($"The type of '{MinPropertyName}' property does not implements {nameof(IComparable)}.");
             }
 
             if (maxPropertyInfo.GetValue(instance) is not IComparable maxValue)
             {
-                throw new NotSupportedException($"The value of {MaxPropertyName} property is not {nameof(IComparable)}.");
+                throw new NotSupportedException($"The type of '{MaxPropertyName}' property does not implements {nameof(IComparable)}.");
             }
 
             if (minValue.CompareTo(maxValue) > 0)
             {
-                throw new InvalidOperationException($"The value of {MinPropertyName} property cannot be greater than value of {nameof(MaxPropertyName)} property.");
+                throw new InvalidOperationException($"The value of '{MinPropertyName}' property cannot be greater than value of {MaxPropertyName} property.");
             }
 
             //validates
             if (value is not IComparable comparableValue)
             {
-                return new ValidationResult(ErrorMessageString);
+                throw new NotSupportedException($"The type of '{validationContext.MemberName}' does not implements {nameof(IComparable)}.");
             }
 
             if (comparableValue.CompareTo(minValue) >= 0 && comparableValue.CompareTo(maxValue) <= 0)
@@ -122,7 +111,7 @@ namespace Adita.PlexNet.ComponentModel.DataAnnotations.DataAnnotations
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult(ErrorMessageString);
+            return new ValidationResult(string.Format(ErrorMessageString, minValue, maxValue));
         }
         #endregion Protected methods
     }
